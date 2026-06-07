@@ -1,0 +1,52 @@
+// 
+// MÓDULO "AJUSTES"
+// Parámetros globales para la configuración de los restantes
+// módulos, por ejemplo, la cámara, los mensajes OSC, la
+// mensajería por puesto serial, etc.
+// 
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+
+// CONFIGURACIÓN DE LAS DIMENSIONES DE LA ENTRADA DEL VIDEO (WEBCAM)
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+// Dimensiones de cada fotograma capturado por la cámara principal
+int CAMARA_ANCHO = 640;
+int CAMARA_ALTO  = 480;
+
+
+
+// PARÁMETROS PARA EL CÁLCULO DEL FLUJO OPTICO
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+// Valores para calcular el "flujo óptico" en la imagen de video capturada.
+final float FLUJO_OPTICO_TECHO    = 30;
+final int   FLUJO_OPTICO_COLUMNAS = 10;
+final int   FLUJO_OPTICO_FILAS    = 10;
+
+
+
+// PARÁMETROS PARA LA SERIALIZACIÓN DE MENSAJES
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+final int    SERIAL_VELOCIDAD_PUERTO = 115200;
+final String SERIAL_PREFIJO_PUERTO   = "/dev/ttyUSB";
+
+
+
+// CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+// Direcciones IPs de los equipos y de los puertos para el protocolo OSC
+final String  IP_MANDANTE        = "192.168.0.9";
+final String  IP_CALIBRADOR      = "192.168.0.9";
+final String  IP_ORQUESTADOR     = "192.168.0.9";
+final int     PUERTO_MANDANTE    = 12000;
+final int     PUERTO_CALIBRADOR  = 12011;
+final int     PUERTO_ORQUESTADOR = 9000;
+final String  DIR_FLUJO_OPTICO   = "/opticalflow";
+final String  DIR_CALIBRADOR     = "/calibrador";
+
+
+
+// CONFIGURACIÓN LOS COMANDOS DEL CALIBRADOR
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+String CALIBRAR_DIR_IZQ  = "izquierda";
+String CALIBRAR_DIR_DER  = "derecha";
+String CALIBRAR_POSICION = "calibrar";
