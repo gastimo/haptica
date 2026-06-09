@@ -19,51 +19,66 @@
 #define ESPERA_CICLO   2         // En milisegundos
 #define SERIAL_VELOCIDAD 115200
 
+#define ANGULO_PASO_MOTOR 1.8
+#define MAX_ANGULO_MOTOR  180
+#define MIN_ANGULO_MOTOR  -180
+
+#define COMANDO_MOVER     "M"
+#define COMANDO_REINICIAR "R"
+#define COMANDO_SEPARADOR ' '
+#define COMANDO_PARAMS     4
+#define COMANDO_POSICION  "POS="
+
 
 // Variables globales
-byte comando[4];  // El comando recibido tiene 4 bytes, según el detalle a continuación
-int  comando_orden     = -1; // BYTE #0: Número identificador del comando a ejecutar
-int  comando_pasos     = 0;  // BYTE #1: Cuantos pasos se girará el motor
-int  comando_direccion = 0;  // BYTE #2: Si el valor == 0, gira en un sentido, sino en sentido opuesto
-int  comando_velocidad = 0;  // BYTE #3: Cantidad de milisegundos a esperar entre paso y paso
+String comando[4];
+int  comando_pasos     = 0;  // PARAM #1: Cuantos pasos se girará el motor
+int  comando_direccion = 0;  // PARAM #2: Si el valor == 0, gira en un sentido, sino en sentido opuesto
+int  comando_velocidad = 0;  // PARAM #3: Cantidad de milisegundos a esperar entre paso y paso
 
-int  motor_demora      = 0;
-bool motor_activado    = false;
-int  motor_posicion    = 0;
+int   motor_demora     = 0;
+bool  motor_activado   = false;
+float motor_posicion   = 0;
 
 
+/**
+ * setup
+ * Inicialización del programa. Se definen los pines de
+ * Arduino a utilizar y se incializa la comunicación por
+ * el puerto serial que recibirá los comandos.
+ */
 void setup() {
   pinMode(PIN_PASO_MOTOR, OUTPUT);
   pinMode(PIN_DIR_MOTOR,  OUTPUT);
-
-  // INICIALIZACIÓN DEL PUERTO DE COMUNICACIÓN
-  // Se establece la misma velocidad de comunicación tanto en Arduino como en Processing
-  // Se envía un primer mensaje para avisarle a Processing que Arduino está list
   Serial.begin(SERIAL_VELOCIDAD);
-  Serial.println("LISTO"); 
+  blanquearComando();
 }
 
 
+/**
+ * loop
+ * Ciclo principal del programa
+ */
 void loop() {
+  leerComando();
 
-  // 1. RECEPCIÓN DE COMANDOS POR PUERTO SERIAL
-  // En primer lugar, se reciben los mensajes por el puerto serial
-  // indicando cómo mover el motor (y cuánto tiempo esperar).
-  // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  while (Serial.available() > 0) {
-    int bytesLeidos = Serial.readBytes(comando, 4);
-    if (bytesLeidos == 4) {
-      // Se verifica si llegó un nuevo comando para hacer girar el motor
-      int comando_recibido = int(comando[0]);
-      if (comando_recibido != comando_orden) {
-        comando_orden     = comando_recibido;
-        comando_pasos     = int(comando[1]);
-        comando_direccion = int(comando[2]) != 0 ? HIGH : LOW;
-        comando_velocidad = int(comando[3]) <= 0 ? ESPERA_CICLO : int(comando[3]);
-        motor_activado    = comando_pasos > 0;
-        motor_demora      = comando_velocidad;
-      }
+  // Se verifica si se recibió un nuevo comando con la
+  // información para hacer mover al motor.
+  if (comando[0].equals(COMANDO_MOVER)) {
+    if (!motor_activado) {
+      comando_pasos     = comando[1].toInt();
+      comando_direccion = comando[2].toInt() > 0 ? HIGH : LOW;
+      comando_velocidad = comando[3].toInt() <= 0 ? ESPERA_CICLO : comando[3].toInt();
+      motor_activado    = comando_pasos > 0;
+      motor_demora      = comando_velocidad;
     }
+    else {
+      notificarComandoRechazado();
+    }
+  }
+  else if (comando[0].equals(COMANDO_REINICIAR)) {
+    motor_posicion = 0;
+    motor_activado = false;
   }
 
 
@@ -82,6 +97,14 @@ void loop() {
       digitalWrite(PIN_PASO_MOTOR, LOW);
       delay(ESPERA_CICLO / 2);
       motor_demora -= ESPERA_CICLO;
+      motor_posicion += (comando_direccion == HIGH ? ANGULO_PASO_MOTOR : -ANGULO_PASO_MOTOR);
+      if (motor_posicion > MAX_ANGULO_MOTOR) {
+        motor_posicion = MAX_ANGULO_MOTOR;
+      }
+      else if (motor_posicion < MIN_ANGULO_MOTOR) {
+        motor_posicion = MIN_ANGULO_MOTOR;
+      }
+      enviarPosicionMotor();
     }
     else if (motor_demora > 0) {
       delay(ESPERA_CICLO);
@@ -96,4 +119,66 @@ void loop() {
     }
   }
 }
+
+/**
+ * leerComando
+ * Recibe los comandos que ingresan por el puerto serial,
+ * interpreta sus parámetros y deja la información en el
+ * array global "comando".
+ */
+void leerComando() {
+  blanquearComando();
+  while (Serial.available() > 0) {
+    int indice = 0;
+    String mensaje = Serial.readStringUntil('\n');
+    int posicionSeparador = mensaje.indexOf(COMANDO_SEPARADOR);
+    while (posicionSeparador > 0 && indice < COMANDO_PARAMS) {
+      comando[indice] = mensaje.substring(0, posicionSeparador);
+      mensaje = mensaje.substring(posicionSeparador + 1);
+      posicionSeparador = mensaje.indexOf(COMANDO_SEPARADOR);
+      indice++;
+    }
+    comando[indice] = mensaje.substring(posicionSeparador + 1);
+  }
+}
+
+/**
+ * blanquearComando
+ * Pone en blanco cada una de las posición del array
+ * global "comando".
+ */
+void blanquearComando() {
+  for (int i = 0; i < COMANDO_PARAMS; i++) {
+    comando[i] = "";
+  }
+}
+
+
+/**
+ * enviarPosicionMotor
+ * Envía un mensaje a Processing, a través del puerto serial,
+ * indicando el ángulo actual (la posición) del motor.
+ */
+void enviarPosicionMotor() {
+  Serial.print(COMANDO_POSICION);
+  Serial.println(motor_posicion);
+}
+
+
+/**
+ * notificarComandoRechazado
+ * Envía un mensaje a Processing, a través del puerto serial,
+ * indicando que el comando recibido fue rechazado.
+ */
+void notificarComandoRechazado() {
+  Serial.print("ERROR=");
+  Serial.print("Comando para girar el motor rechazado. Pasos=");
+  Serial.print(comando[1]);
+  Serial.print(", Dirección=");
+  Serial.print(comando[2]);
+  Serial.print(", Velocidad (ms)=");
+  Serial.println(comando[3]);
+}
+
+
 

@@ -118,6 +118,7 @@ class TransmisorOSC {
         String accion = mensajeEntrante.get(0).stringValue();
         int    valor  = mensajeEntrante.get(1).intValue();
         println(" #Mensaje OSC del CALIBRADOR recibido. Acción=" + accion + ", Valor=" + valor);
+        rotor.calibrar(accion, valor);
       }
     }
     

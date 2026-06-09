@@ -45,10 +45,15 @@ final String  DIR_CALIBRADOR     = "/calibrador";
 final String  DIR_CONTROLADOR    = "/controlador";
 
 
+// CONFIGURACIÓN LOS COMANDOS DEL ROTOR (ENVIADOS A ARDUINO)
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+final String COMANDO_MOVER     = "M";
+final String COMANDO_REINICIAR = "R";
+
 
 // CONFIGURACIÓN LOS COMANDOS DEL CALIBRADOR
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-String CALIBRAR_DIR_IZQ  = "izquierda";
-String CALIBRAR_DIR_DER  = "derecha";
-String CALIBRAR_POSICION = "calibrar";
-String CALIBRAR_REINICIO = "reiniciar";
+final String CALIBRAR_DIR_IZQ  = "izquierda";
+final String CALIBRAR_DIR_DER  = "derecha";
+final String CALIBRAR_POSICION = "calibrar";
+final String CALIBRAR_REINICIO = "reiniciar";

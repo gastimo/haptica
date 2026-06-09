@@ -84,9 +84,13 @@ void draw() {
      // para detectar el movimiento en el video capturado.
      // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
      procesador.evaluar(imagenOriginal, FLUJO_OPTICO_TECHO);
-     float[] e = procesador.posicionIntensidad();
-     println("POS=" + e[0] + ", INT=" + e[1]);
-   
+     //float[] e = procesador.posicionIntensidad();
+     //println("POS=" + e[0] + ", INT=" + e[1]);
+     if (frameCount % 124 == 0) {
+       //serializador.enviar("M 10 " + (random(0, 1) >= 0.5 ? 1 : 0) + " 30\n");
+     }
+  
+
 
      // 3. GENERACIÓN DEL VIDEO DE SALIDA
      // Se generan las imágenes en la ventana principal de Processing
@@ -113,4 +117,18 @@ void draw() {
      }
   }
   
+}
+
+
+void serialEvent(Serial myPort) {
+  String mensaje = myPort.readStringUntil('\n');
+  if (mensaje != null) {
+    mensaje = trim(mensaje);
+    if (mensaje.startsWith("POS=")) {
+      rotor.guardarPosicion(float(mensaje.substring(4)));
+    }
+    else {
+      println(" => Mensaje recibido desde Arduino: " + mensaje);
+    }
+  }
 }

@@ -50,5 +50,11 @@ class TransmisorSerial {
       puertoSerial.write(datos);
     }
   }
+  
+  public void enviar(String mensaje) {
+    if (inicializado) {
+      puertoSerial.write(mensaje);
+    }
+  }
 
 }
