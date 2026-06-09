@@ -22,6 +22,7 @@ class Procesador {
   OpenCV opencv;
   Matriz matriz;
   float flujo[][];
+  float evaluacion[];
 
   
   public Procesador(PApplet contenedor, int ancho, int alto, int columnas, int filas) {
@@ -36,8 +37,20 @@ class Procesador {
     flujo = matriz.devolverCasillas(techo);
   }
   
+  public void evaluar(PImage imagen, float techo) {
+    opencv.loadImage(imagen);
+    opencv.calculateOpticalFlow();
+    matriz.evaluar(opencv);
+    flujo = matriz.devolverCasillas(techo);
+    evaluacion = matriz.devolverPosicionIntensidad(techo);
+  }
+  
   public float[][] flujoOptico() {
     return flujo;
+  }
+  
+  public float[] posicionIntensidad() {
+    return evaluacion;
   }
   
   public void mostrar(float x, float y, float techo) {
@@ -63,6 +76,8 @@ class Matriz {
   float moduloH, moduloV;
   PVector m[][];
   float cuanto[][];
+  int   maxCoordenada[];
+  float maxValorFlujo;
 
   Matriz(int columnas_, int filas_, int ancho_, int alto_) {
     ancho = ancho_;
@@ -85,6 +100,23 @@ class Matriz {
       }
     }
   }
+  
+  void evaluar( OpenCV opencv ) {
+    maxValorFlujo = 0;
+    int maxVal[] = {0, 0};
+    for ( int i=0; i<columnas; i++ ) {
+      for ( int j=0; j<filas; j++ ) {
+        m[i][j] = opencv.getAverageFlowInRegion(int(i*moduloH), int(j*moduloV), int(moduloH), int(moduloV));
+        cuanto[i][j] = m[i][j].mag();
+        if (cuanto[i][j] > maxValorFlujo) {
+          maxValorFlujo = cuanto[i][j];
+          maxVal[0] = i;
+          maxVal[1] = j;
+        }
+      }
+    }
+    maxCoordenada = maxVal;
+  }
 
   float devolverCasilla( int columna, int fila, float techo ) {
     float valor = map( cuanto[columna][fila], 0, techo, 0, 255 );
@@ -96,11 +128,23 @@ class Matriz {
     float[][] casillas = new float[columnas][filas];
     for ( int i=0; i<columnas; i++ ) {
       for ( int j=0; j<filas; j++ ) {
-        float valor = map( cuanto[i][j], 0, techo, 0, 1.5 );
-        casillas[i][j] = constrain( valor, 0, 1 );
+        casillas[i][j] = obtenerValorNormalizado(cuanto[i][j], techo);
       }
     }
     return casillas;
+  }
+  
+  float[] devolverPosicionIntensidad(float techo) {
+    float[] salida = new float[2];
+    if (maxValorFlujo == 0) {
+      salida[0] = 0;
+      salida[1] = 0;
+    }
+    else {
+      salida[1] = map(maxCoordenada[0], 0, columnas, -1, 1);
+      salida[0] = obtenerValorNormalizado(maxValorFlujo, techo);
+    }
+    return salida;
   }
 
   void dibujar( float x, float y, float techo ) {
@@ -113,4 +157,10 @@ class Matriz {
       }
     }
   }
+  
+  float obtenerValorNormalizado(float valor, float techo) {
+    float resultado = map(valor, 0, techo, 0, 1.5);
+    return constrain(resultado, 0, 1);
+  }
+  
 }

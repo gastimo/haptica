@@ -1,5 +1,5 @@
 // 
-// MÓDULO "AJUSTES"
+// AJUSTES (CONFIGURACIÓN DE LOS MÓDULOS)
 // Parámetros globales para la configuración de los restantes
 // módulos, por ejemplo, la cámara, los mensajes OSC, la
 // mensajería por puesto serial, etc.
@@ -36,12 +36,13 @@ final String SERIAL_PREFIJO_PUERTO   = "/dev/ttyUSB";
 // Direcciones IPs de los equipos y de los puertos para el protocolo OSC
 final String  IP_MANDANTE        = "192.168.0.9";
 final String  IP_CALIBRADOR      = "192.168.0.9";
-final String  IP_ORQUESTADOR     = "192.168.0.9";
+final String  IP_CONTROLADOR     = "192.168.0.9";
 final int     PUERTO_MANDANTE    = 12000;
 final int     PUERTO_CALIBRADOR  = 12011;
-final int     PUERTO_ORQUESTADOR = 9000;
+final int     PUERTO_CONTROLADOR = 9000;
 final String  DIR_FLUJO_OPTICO   = "/opticalflow";
 final String  DIR_CALIBRADOR     = "/calibrador";
+final String  DIR_CONTROLADOR    = "/controlador";
 
 
 
@@ -50,3 +51,4 @@ final String  DIR_CALIBRADOR     = "/calibrador";
 String CALIBRAR_DIR_IZQ  = "izquierda";
 String CALIBRAR_DIR_DER  = "derecha";
 String CALIBRAR_POSICION = "calibrar";
+String CALIBRAR_REINICIO = "reiniciar";

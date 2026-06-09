@@ -9,6 +9,7 @@
 //  "V" : Gira el motor un paso hacia la derecha
 //  "B" : Gira el motor diez pasos hacia la derecha
 //  "C" : Calibra el motor (define la posición actual como punto de inicio)
+//  "R" : Reinicia el motor (colocarlo en su posición inicial)
 // 
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
@@ -50,6 +51,9 @@ void draw() {
 void keyPressed() {
   if (key == 'c' || key == 'C') {
     transmisor.enviar(CALIBRAR_POSICION, 0, DIR_CALIBRADOR);
+  }
+  else if (key == 'r' || key == 'R') {
+    transmisor.enviar(CALIBRAR_REINICIO, 0, DIR_CALIBRADOR);
   }
   else if (key == 'x' || key == 'X') {
     transmisor.enviar(CALIBRAR_DIR_IZQ, 1, DIR_CALIBRADOR);

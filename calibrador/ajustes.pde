@@ -31,3 +31,4 @@ final String  DIR_CALIBRADOR     = "/calibrador";
 String CALIBRAR_DIR_IZQ  = "izquierda";
 String CALIBRAR_DIR_DER  = "derecha";
 String CALIBRAR_POSICION = "calibrar";
+String CALIBRAR_REINICIO = "reiniciar";

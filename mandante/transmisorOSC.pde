@@ -95,7 +95,9 @@ class TransmisorOSC {
    */
   public void oscEvent(OscMessage mensajeEntrante) {
   
-    // Recibir mensaje de prueba
+    // RECEPCIÓN DE MENSAJES DEL "PRUEBA"
+    // Mensaje plantilla para ejemplificar la recepción de mensajes a través de la librería OSC.
+    // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     if (mensajeEntrante.checkAddrPattern("/test")) {
       if (mensajeEntrante.checkTypetag("ifs")) {
         int firstValue     = mensajeEntrante.get(0).intValue();
@@ -105,16 +107,36 @@ class TransmisorOSC {
       }
     }
     
-    // Recibir mensaje del "Calibrador"
+    // RECEPCIÓN DE MENSAJES DEL "CALIBRADOR"
+    // Este mensaje contiene la información para mover y calibrar la posición 
+    // inicial del motor del mandante. Sus argumentos son:
+    //  1. ACCION (String) : Acción a realizar ("calibrar", "reiniciar", "izquierda", "derecha")
+    //  2. VALOR (integer) : Cantidad de pasos a girar (sólo cuando la acción es "izquierda" o "derecha")
+    // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     else if (mensajeEntrante.checkAddrPattern(DIR_CALIBRADOR)) {
       if (mensajeEntrante.checkTypetag("si")) {
-        String discriminador = mensajeEntrante.get(0).stringValue();
-        int    valor = mensajeEntrante.get(1).intValue();
-        println(" #Mensaje OSC del CALIBRADOR recibido. Discriminador=" + discriminador + ", Valor=" + valor);
+        String accion = mensajeEntrante.get(0).stringValue();
+        int    valor  = mensajeEntrante.get(1).intValue();
+        println(" #Mensaje OSC del CALIBRADOR recibido. Acción=" + accion + ", Valor=" + valor);
       }
     }
     
-  }
+    
+    // RECEPCIÓN DE MENSAJES DEL "CONTROLADOR"
+    // Este mensaje contiene valores numéricos para controlar el giro del motor.
+    //  1. POSICIÓN (float)   : Es un valor entre -1 y 1 indicando la posición de giro del motor
+    //  2. INTENSIDAD (float) : Es un valor entre 0 y 1 indicanto la velocidad de giro.
+    // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    else if (mensajeEntrante.checkAddrPattern(DIR_CONTROLADOR)) {
+      if (mensajeEntrante.checkTypetag("ff")) {
+        float posicion   = mensajeEntrante.get(0).floatValue();
+        float intensidad = mensajeEntrante.get(1).floatValue();
+        println(" #Mensaje OSC del CONTROLADOR recibido. Posición=" + posicion + ", Intensidad=" + intensidad);
+        rotor.girar(posicion, intensidad);
+      }
+    }
+
+}
   
   
 }

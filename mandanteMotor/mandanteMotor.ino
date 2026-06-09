@@ -26,14 +26,21 @@ int  comando_orden     = -1; // BYTE #0: Número identificador del comando a eje
 int  comando_pasos     = 0;  // BYTE #1: Cuantos pasos se girará el motor
 int  comando_direccion = 0;  // BYTE #2: Si el valor == 0, gira en un sentido, sino en sentido opuesto
 int  comando_velocidad = 0;  // BYTE #3: Cantidad de milisegundos a esperar entre paso y paso
+
 int  motor_demora      = 0;
 bool motor_activado    = false;
+int  motor_posicion    = 0;
 
 
 void setup() {
   pinMode(PIN_PASO_MOTOR, OUTPUT);
   pinMode(PIN_DIR_MOTOR,  OUTPUT);
-  Serial.begin(SERIAL_VELOCIDAD); // Debe coincidir con la velocidad definida en Processing
+
+  // INICIALIZACIÓN DEL PUERTO DE COMUNICACIÓN
+  // Se establece la misma velocidad de comunicación tanto en Arduino como en Processing
+  // Se envía un primer mensaje para avisarle a Processing que Arduino está list
+  Serial.begin(SERIAL_VELOCIDAD);
+  Serial.println("LISTO"); 
 }
 
 
@@ -68,12 +75,16 @@ void loop() {
   // cantidad de pasos solicitados por el comando.
   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   if (motor_activado) {
-    if (motor_demora > 0) {
+    if (motor_demora == comando_velocidad) {
       digitalWrite(PIN_DIR_MOTOR,  comando_direccion); 
       digitalWrite(PIN_PASO_MOTOR, HIGH);
       delay(ESPERA_CICLO / 2);
       digitalWrite(PIN_PASO_MOTOR, LOW);
       delay(ESPERA_CICLO / 2);
+      motor_demora -= ESPERA_CICLO;
+    }
+    else if (motor_demora > 0) {
+      delay(ESPERA_CICLO);
       motor_demora -= ESPERA_CICLO;
     }
     else {
