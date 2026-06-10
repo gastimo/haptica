@@ -16,12 +16,12 @@ int VENTANA_ALTO  = 450;
 // CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // Direcciones IPs de los equipos y de los puertos para el protocolo OSC
-final String  IP_MANDANTE        = "192.168.0.9";
-final String  IP_CALIBRADOR      = "192.168.0.9";
-final String  IP_ORQUESTADOR     = "192.168.0.9";
-final int     PUERTO_MANDANTE    = 12000;
+final String  IP_MANDANTE        = "192.168.80.151";
+final String  IP_CALIBRADOR      = "192.168.80.151";
+final String  IP_ORQUESTADOR     = "192.168.80.151";
+final int     PUERTO_MANDANTE    = 9000;
 final int     PUERTO_CALIBRADOR  = 12011;
-final int     PUERTO_ORQUESTADOR = 9000;
+final int     PUERTO_ORQUESTADOR = 8000;
 final String  DIR_FLUJO_OPTICO   = "/opticalflow";
 final String  DIR_CALIBRADOR     = "/calibrador";
 

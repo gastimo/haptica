@@ -45,6 +45,12 @@ class Rotor {
   }
   
   void girar(float posicion, float intensidad) {
+    float angulo = map(posicion, -1, 1, MIN_ANGULO_MOTOR, MAX_ANGULO_MOTOR);
+    int pasos = int((angulo - posicion_actual) / 1.8);
+    if (pasos != 0) {
+      mover(abs(pasos), pasos, int(map(intensidad, 0, 1, 1, 10)));
+      println("  CALCULO CONTROLADOR. PASOS=" + abs(pasos) + ", DIR=" + pasos + ", INT=" + int(map(intensidad, 1, 0, 1, 300)));
+    }
   }
 
 }

@@ -20,8 +20,8 @@
 #define SERIAL_VELOCIDAD 115200
 
 #define ANGULO_PASO_MOTOR 1.8
-#define MAX_ANGULO_MOTOR  180
-#define MIN_ANGULO_MOTOR  -180
+#define MAX_ANGULO_MOTOR  90
+#define MIN_ANGULO_MOTOR  -90
 
 #define COMANDO_MOVER     "M"
 #define COMANDO_REINICIAR "R"
@@ -91,18 +91,26 @@ void loop() {
   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   if (motor_activado) {
     if (motor_demora == comando_velocidad) {
-      digitalWrite(PIN_DIR_MOTOR,  comando_direccion); 
-      digitalWrite(PIN_PASO_MOTOR, HIGH);
-      delay(ESPERA_CICLO / 2);
-      digitalWrite(PIN_PASO_MOTOR, LOW);
-      delay(ESPERA_CICLO / 2);
-      motor_demora -= ESPERA_CICLO;
       motor_posicion += (comando_direccion == HIGH ? ANGULO_PASO_MOTOR : -ANGULO_PASO_MOTOR);
       if (motor_posicion > MAX_ANGULO_MOTOR) {
         motor_posicion = MAX_ANGULO_MOTOR;
+        motor_activado = false;
+        comando_pasos = 0;
+        delay(ESPERA_CICLO);
       }
       else if (motor_posicion < MIN_ANGULO_MOTOR) {
         motor_posicion = MIN_ANGULO_MOTOR;
+        motor_activado = false;
+        comando_pasos = 0;
+        delay(ESPERA_CICLO);
+      }
+      else {
+        digitalWrite(PIN_DIR_MOTOR,  comando_direccion); 
+        digitalWrite(PIN_PASO_MOTOR, HIGH);
+        delay(ESPERA_CICLO / 2);
+        digitalWrite(PIN_PASO_MOTOR, LOW);
+        delay(ESPERA_CICLO / 2);
+        motor_demora -= ESPERA_CICLO;
       }
       enviarPosicionMotor();
     }

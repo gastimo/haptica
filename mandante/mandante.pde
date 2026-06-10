@@ -9,7 +9,7 @@
 // Parámetros generales para configuración del "Mandante"
 boolean CAPTURA_VIDEO_ACTIVA = true;   // Captura el video de la webcam para su procesamiento
 boolean SALIDA_VIDEO_ACTIVA  = true;   // Produce video de monitoreo en la ventana de Processing
-boolean ENVIAR_FLUJO_OPTICO  = true;  // Envía por OSC la matriz del "Flujo Óptico" calculado
+boolean ENVIAR_FLUJO_OPTICO  = true;   // Envía por OSC la matriz del "Flujo Óptico" calculado
 
 
 // Variables globales para el procesamiento
@@ -60,6 +60,7 @@ void setup() {
   transmisor   = new TransmisorOSC(PUERTO_MANDANTE, IP_CONTROLADOR, PUERTO_CONTROLADOR);
   serializador = new TransmisorSerial(this);
   rotor = new Rotor(serializador);
+  transmisor.enviarDimensiones(FLUJO_OPTICO_COLUMNAS, FLUJO_OPTICO_FILAS, DIR_FLUJO_OPTICO_DIM);
 }
 
 

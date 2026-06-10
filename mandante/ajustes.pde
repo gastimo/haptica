@@ -14,6 +14,9 @@ int CAMARA_ANCHO = 640;
 int CAMARA_ALTO  = 480;
 
 
+int MAX_ANGULO_MOTOR  = 90;
+int MIN_ANGULO_MOTOR  = -90;
+
 
 // PARÁMETROS PARA EL CÁLCULO DEL FLUJO OPTICO
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -34,15 +37,16 @@ final String SERIAL_PREFIJO_PUERTO   = "/dev/ttyUSB";
 // CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // Direcciones IPs de los equipos y de los puertos para el protocolo OSC
-final String  IP_MANDANTE        = "192.168.0.9";
-final String  IP_CALIBRADOR      = "192.168.0.9";
-final String  IP_CONTROLADOR     = "192.168.0.9";
-final int     PUERTO_MANDANTE    = 12000;
+final String  IP_MANDANTE        = "192.168.80.151";
+final String  IP_CALIBRADOR      = "192.168.80.151";
+final String  IP_CONTROLADOR     = "192.168.80.211";
+final int     PUERTO_MANDANTE    = 9000;
 final int     PUERTO_CALIBRADOR  = 12011;
-final int     PUERTO_CONTROLADOR = 9000;
-final String  DIR_FLUJO_OPTICO   = "/opticalflow";
-final String  DIR_CALIBRADOR     = "/calibrador";
-final String  DIR_CONTROLADOR    = "/controlador";
+final int     PUERTO_CONTROLADOR = 8000;
+final String  DIR_FLUJO_OPTICO_DIM = "/opticalflow/matriz";
+final String  DIR_FLUJO_OPTICO     = "/opticalflow";
+final String  DIR_CALIBRADOR       = "/calibrador";
+final String  DIR_CONTROLADOR      = "/controlador";
 
 
 // CONFIGURACIÓN LOS COMANDOS DEL ROTOR (ENVIADOS A ARDUINO)

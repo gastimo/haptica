@@ -87,6 +87,20 @@ class TransmisorOSC {
     }
   }
   
+  public void enviarDimensiones(int columnas, int filas, String direccion) {
+    OscMessage mensaje;
+    if (oscInicializado) {
+      mensaje = new OscMessage(direccion);
+      mensaje.add(columnas);
+      mensaje.add(filas);
+      oscP5.send(mensaje, direccionRemota);
+      if (replicador) {
+        oscP5.send(mensaje, direccionAdicional);
+      }
+    }
+  }
+  
+  
   
   /**
    * oscEvent
