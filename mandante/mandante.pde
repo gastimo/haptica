@@ -32,7 +32,7 @@ void settings() {
     size(CAMARA_ANCHO * 2, CAMARA_ALTO);
   }
   else {
-    size(300, 300);
+    size(200, 200);
   }
 }
 
@@ -86,11 +86,7 @@ void draw() {
      // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
      procesador.evaluar(imagenOriginal, FLUJO_OPTICO_TECHO);
      //float[] e = procesador.posicionIntensidad();
-     //println("POS=" + e[0] + ", INT=" + e[1]);
-     if (frameCount % 124 == 0) {
-       //serializador.enviar("M 10 " + (random(0, 1) >= 0.5 ? 1 : 0) + " 30\n");
-     }
-  
+     //println("POS=" + e[0] + ", INT=" + e[1]);  
 
 
      // 3. GENERACIÓN DEL VIDEO DE SALIDA
