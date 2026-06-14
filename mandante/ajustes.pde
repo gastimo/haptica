@@ -32,14 +32,14 @@ final int   FLUJO_OPTICO_FILAS    = 10;
 // PARÁMETROS PARA LA SERIALIZACIÓN DE MENSAJES
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 final int    SERIAL_VELOCIDAD_PUERTO = 115200;
-final String SERIAL_PREFIJO_PUERTO   = "/dev/ttyUSB";
+final String SERIAL_PREFIJO_PUERTO   = "/dev/ttyACM0"; //"/dev/ttyUSB";
 
 
 // CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // Direcciones IPs y puertos de los equipos para el protocolo OSC
-final String  IP_MANDANTE        = "192.168.0.9";
-final String  IP_CONTROLADOR     = "192.168.0.9";
+final String  IP_MANDANTE        = "192.168.0.198";
+final String  IP_CONTROLADOR     = "192.168.0.198";
 final int     PUERTO_MANDANTE    = 9000;   // Donde recibe los mensajes ("escucha")
 final int     PUERTO_CONTROLADOR = 8000;   // A donde se envían los mensajes
 
