@@ -16,6 +16,7 @@ boolean ENVIAR_FLUJO_OPTICO  = true;   // Envía por OSC la matriz del "Flujo Ó
 Camara camara;
 PImage imagenOriginal;
 Rotor rotor;
+Fanal fanal;
 Procesador procesador;
 TransmisorSerial serializador;
 TransmisorOSC transmisor;
@@ -60,6 +61,7 @@ void setup() {
   transmisor   = new TransmisorOSC(PUERTO_MANDANTE, IP_CONTROLADOR, PUERTO_CONTROLADOR);
   serializador = new TransmisorSerial(this);
   rotor = new Rotor(serializador);
+  fanal = new Fanal(serializador);
   transmisor.enviarDimensiones(FLUJO_OPTICO_COLUMNAS, FLUJO_OPTICO_FILAS, DIR_FLUJO_OPTICO_DIM);
 }
 
@@ -128,12 +130,13 @@ void serialEvent(Serial myPort) {
     mensaje = trim(mensaje);
     if (mensaje.startsWith(FEEDBACK_POSICION)) {
       rotor.guardarPosicion(float(mensaje.substring(4)));
+      println(" ########## ARDUINO HA RESPONDIDO (Motor): " + mensaje);
     }
     else if (mensaje.startsWith(FEEDBACK_LEDS)) {
-      println(" ########## ARDUINO HA DICHO: " + mensaje);
+      println(" ########## ARDUINO HA RESPONDIDO (Leds): " + mensaje);
     }
     else {
-      println(" ########## ARDUINO HA DICHO: " + mensaje);
+      println(" ########## ARDUINO HA RESPONDIDO: " + mensaje);
     }
   }
 }

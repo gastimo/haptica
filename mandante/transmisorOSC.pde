@@ -131,30 +131,44 @@ class TransmisorOSC {
         String accion = mensajeEntrante.get(0).stringValue();
         int    valor  = mensajeEntrante.get(1).intValue();
         if (accion.equals(CONTROL_LUCES_LED)) {
-          println(" ### Mensaje de ENCENCIDO/APAGADO recibido. Intensidad LED=" + valor);
+          println("");
+          println(" ### CALIBRACIÓN -> Prueba del fanal. Intensidad LED=" + valor);
+          fanal.intensidad(valor);
         }
         else {
-          println(" ### Mensaje de CALIBRACIÓN recibido. Acción=" + accion + ", Valor=" + valor);
+          println("");
+          println(" ### CALIBRACIÓN -> Calibración del motor. Acción=" + accion + ", Valor=" + valor);
           rotor.calibrar(accion, valor); 
         }
       }
     }
     
     
-    // RECEPCIÓN DE MENSAJES DEL "CONTROLADOR"
+    // RECEPCIÓN DE MENSAJES DEL "CONTROLADOR" PARA EL MOTOR
     // Este mensaje contiene valores numéricos para controlar el giro del motor.
-    //  1. POSICIÓN (float)   : Es un valor entre -1 y 1 indicando la posición de giro del motor
-    //  2. INTENSIDAD (float) : Es un valor entre 0 y 1 indicanto la velocidad de giro.
+    //  1. PASOS (float)     : Indica cuántos pasos se debe mover el motor
+    //  2. DIRECCION (float) : Indica el sentido de giro (>0 en un sentido y <=0 en sentido opuesto
     // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     else if (mensajeEntrante.checkAddrPattern(DIR_CONTROLADOR)) {
       if (mensajeEntrante.checkTypetag("ff")) {
         float pasos = mensajeEntrante.get(0).floatValue();
         float direccion = mensajeEntrante.get(1).floatValue();
-        println(" #Mensaje OSC del CONTROLADOR recibido. Pasos=" + pasos + ", Dirección=" + direccion);
+        println(" ### CONTROLADOR ==> Mover el motor. Pasos=" + pasos + ", Dirección=" + direccion);
         rotor.rotar(int(pasos), int(direccion));
       }
     }
-
+    
+    // RECEPCIÓN DE MENSAJES DEL "CONTROLADOR" PARA LAS LUCES LEDS
+    // Este mensaje recibe único valor (entre 0 y 1) que indica la intensidad para las luces leds 
+    // (cero significa que deben apagarse los leds).
+    // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    else if (mensajeEntrante.checkAddrPattern(DIR_ENCENDEDOR)) {
+      if (mensajeEntrante.checkTypetag("f")) {
+        float valor = mensajeEntrante.get(0).floatValue();
+        println(" ### CONFIGURADOR ==> Encender el fanal. Intensidad=" + valor);
+        fanal.intensidad(valor);
+      }
+    }
 }
   
   
