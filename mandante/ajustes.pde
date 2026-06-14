@@ -32,7 +32,9 @@ final int   FLUJO_OPTICO_FILAS    = 10;
 // PARÁMETROS PARA LA SERIALIZACIÓN DE MENSAJES
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 final int    SERIAL_VELOCIDAD_PUERTO = 115200;
-final String SERIAL_PREFIJO_PUERTO   = "/dev/ttyACM0"; //"/dev/ttyUSB";
+final String SERIAL_PUERTO_RASPBERRY = "/dev/ttyACM0";   // Puerto USB Raspberry (azul)
+final String SERIAL_PUERTO_UBUNTU    = "/dev/ttyUSB";    // Puerto USB Ubuntu
+final String SERIAL_PREFIJO_PUERTO   = SERIAL_PUERTO_RASPBERRY;
 
 
 // CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
