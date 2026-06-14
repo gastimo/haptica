@@ -101,7 +101,6 @@ class TransmisorOSC {
   }
   
   
-  
   /**
    * oscEvent
    * Función principal de la librería oscP5 que es invocada de
@@ -121,18 +120,23 @@ class TransmisorOSC {
       }
     }
     
-    // RECEPCIÓN DE MENSAJES DEL "CALIBRADOR"
-    // Este mensaje contiene la información para mover y calibrar la posición 
-    // inicial del motor del mandante. Sus argumentos son:
-    //  1. ACCION (String) : Acción a realizar ("calibrar", "reiniciar", "izquierda", "derecha")
-    //  2. VALOR (integer) : Cantidad de pasos a girar (sólo cuando la acción es "izquierda" o "derecha")
+    // RECEPCIÓN DE MENSAJES DEL "CONFIGURADOR"
+    // Este mensaje contiene la información de los comandos del "Configurador"
+    // Estos mensajes permiten, por un lado, calibrar el motor y, por otro, encencer las luces.
+    //  1. ACCION (String): Acción a realizar ("calibrar", "reiniciar", "izquierda", "derecha", "leds")
+    //  2. VALOR (integer): Nro. de pasos (ACCIÓN=izquierda/derecha) o intensidad del led (ACCIÓN=leds).
     // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    else if (mensajeEntrante.checkAddrPattern(DIR_CALIBRADOR)) {
+    else if (mensajeEntrante.checkAddrPattern(DIR_CONFIGURADOR)) {
       if (mensajeEntrante.checkTypetag("si")) {
         String accion = mensajeEntrante.get(0).stringValue();
         int    valor  = mensajeEntrante.get(1).intValue();
-        println(" #Mensaje OSC del CALIBRADOR recibido. Acción=" + accion + ", Valor=" + valor);
-        rotor.calibrar(accion, valor);
+        if (accion.equals(CONTROL_LUCES_LED)) {
+          println(" ### Mensaje de ENCENCIDO/APAGADO recibido. Intensidad LED=" + valor);
+        }
+        else {
+          println(" ### Mensaje de CALIBRACIÓN recibido. Acción=" + accion + ", Valor=" + valor);
+          rotor.calibrar(accion, valor); 
+        }
       }
     }
     
@@ -144,10 +148,10 @@ class TransmisorOSC {
     // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     else if (mensajeEntrante.checkAddrPattern(DIR_CONTROLADOR)) {
       if (mensajeEntrante.checkTypetag("ff")) {
-        float posicion   = mensajeEntrante.get(0).floatValue();
-        float intensidad = mensajeEntrante.get(1).floatValue();
-        println(" #Mensaje OSC del CONTROLADOR recibido. Posición=" + posicion + ", Intensidad=" + intensidad);
-        rotor.girar(posicion, intensidad);
+        float pasos = mensajeEntrante.get(0).floatValue();
+        float direccion = mensajeEntrante.get(1).floatValue();
+        println(" #Mensaje OSC del CONTROLADOR recibido. Pasos=" + pasos + ", Dirección=" + direccion);
+        rotor.rotar(int(pasos), int(direccion));
       }
     }
 

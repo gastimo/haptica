@@ -117,15 +117,23 @@ void draw() {
 }
 
 
+/**
+ * serialEvent
+ * Función que recibe y procesa los mensajes recibidos
+ * desde Arduino por el puerto serial.
+ */
 void serialEvent(Serial myPort) {
   String mensaje = myPort.readStringUntil('\n');
   if (mensaje != null) {
     mensaje = trim(mensaje);
-    if (mensaje.startsWith("POS=")) {
+    if (mensaje.startsWith(FEEDBACK_POSICION)) {
       rotor.guardarPosicion(float(mensaje.substring(4)));
     }
+    else if (mensaje.startsWith(FEEDBACK_LEDS)) {
+      println(" ########## ARDUINO HA DICHO: " + mensaje);
+    }
     else {
-      println(" => Mensaje recibido desde Arduino: " + mensaje);
+      println(" ########## ARDUINO HA DICHO: " + mensaje);
     }
   }
 }

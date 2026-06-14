@@ -10,6 +10,7 @@
 import oscP5.*;
 import netP5.*;
 
+
 OscP5 oscP5;
 int puertoEntrante = 0;
 boolean oscInicializado = false;
@@ -93,7 +94,6 @@ class TransmisorOSC {
    * forma automática cada vez que un evento OSC es recibido.
    */
   public void oscEvent(OscMessage mensajeEntrante) {
-  
     // Recibir mensaje de prueba
     if (mensajeEntrante.checkAddrPattern("/test")) {
       if (mensajeEntrante.checkTypetag("ifs")) {
@@ -103,16 +103,6 @@ class TransmisorOSC {
         println(" #Mensaje OSC de prueba recibido. Valores: " + firstValue + ", " + secondValue + ", " + thirdValue);
       }
     }
-    
-    // Recibir mensaje del "Calibrador"
-    else if (mensajeEntrante.checkAddrPattern(DIR_CALIBRADOR)) {
-      if (mensajeEntrante.checkTypetag("si")) {
-        String direccion = mensajeEntrante.get(0).stringValue();
-        int    cantidad  = mensajeEntrante.get(1).intValue();
-        println(" #Mensaje OSC del CALIBRADOR recibido. Dirección=" + direccion + ", Cantidad=" + cantidad);
-      }
-    }
-    
   }
   
   

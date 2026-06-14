@@ -19,12 +19,27 @@ class Rotor {
   
   void guardarPosicion(float pos) {
     posicion_actual = pos;
-    println("Posición del motor=" + posicion_actual);
   }
   
   void mover(int pasos, int direccion, int velocidad) {
     String comando = COMANDO_MOVER + " " + pasos + " " + direccion + " " + velocidad + "\n";
     transmisor.enviar(comando);
+  }
+    
+  void rotar(int pasos, int direccion) {
+    if (pasos != 0) {
+      mover(abs(pasos), (direccion > 0 ? 1 : 0), COMANDO_VELOCIDAD_GIRO);
+      println("  ==> COMANDO> ROTAR MOTOR: PASOS=" + abs(pasos) + ", DIRECCIÓN=" + direccion);
+    }
+  }
+    
+  void rotar(float posicion, float intensidad) {
+    float angulo = map(posicion, -1, 1, MIN_ANGULO_MOTOR, MAX_ANGULO_MOTOR);
+    int pasos = int((angulo - posicion_actual) / 1.8);
+    if (pasos != 0) {
+      mover(abs(pasos), pasos, int(map(intensidad, 0, 1, 1, COMANDO_VELOCIDAD_GIRO)));
+      println("  ==> COMANDO> ROTAR MOTOR: PASOS=" + abs(pasos));
+    }
   }
   
   void calibrar(String accion, int valor) {
@@ -32,24 +47,15 @@ class Rotor {
       transmisor.enviar(COMANDO_REINICIAR + " 0 0 0\n");
     }
     else if (accion.equals(CALIBRAR_DIR_DER)) {
-      mover(valor, 1, valor * 2);
+      mover(valor, 1, valor < 10 ? 4 : valor);
     }
     else if (accion.equals(CALIBRAR_DIR_IZQ)) {
-      mover(valor, -1, valor * 2);
+      mover(valor, -1, valor < 10 ? 4 : valor);
     }
     else if (accion.equals(CALIBRAR_REINICIO)) {
       if (posicion_actual != 0) {
-        mover(abs(int(posicion_actual / 1.8)), -int(posicion_actual/abs(posicion_actual)), 40);
+        mover(abs(int(posicion_actual / 1.8)), -int(posicion_actual/abs(posicion_actual)), int(COMANDO_VELOCIDAD_GIRO*1.5));
       }
-    }
-  }
-  
-  void girar(float posicion, float intensidad) {
-    float angulo = map(posicion, -1, 1, MIN_ANGULO_MOTOR, MAX_ANGULO_MOTOR);
-    int pasos = int((angulo - posicion_actual) / 1.8);
-    if (pasos != 0) {
-      mover(abs(pasos), pasos, int(map(intensidad, 0, 1, 1, 10)));
-      println("  CALCULO CONTROLADOR. PASOS=" + abs(pasos) + ", DIR=" + pasos + ", INT=" + int(map(intensidad, 1, 0, 1, 300)));
     }
   }
 
