@@ -133,7 +133,7 @@ class TransmisorOSC {
         if (accion.equals(CONTROL_LUCES_LED)) {
           println("");
           println(" ### CALIBRACIÓN -> Prueba del fanal. Intensidad LED=" + valor);
-          fanal.intensidad(valor);
+          fanal.intensidad(valor == 0 ? 0 : map(valor, 0, 9, 0, 255));
         }
         else {
           println("");

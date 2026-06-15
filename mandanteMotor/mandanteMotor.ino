@@ -11,11 +11,13 @@
 // por el puerto serial de comunicación.
 //
 // ---------------------------------------------------------------
+#include <Adafruit_NeoPixel.h>
 
 
 // Declaración de constantes globales
 #define PIN_PASO_MOTOR    4
 #define PIN_DIR_MOTOR     5
+#define PIN_PIXEL_LEDS    6
 #define MIN_ESPERA_CICLO  2      // En milisegundos
 #define SERIAL_VELOCIDAD  115200
 
@@ -33,6 +35,9 @@
 #define FEEDBACK_LEDS     "LED="
 #define FEEDBACK_ERROR    "ERROR="
 
+#define CANTIDAD_PIXELS   8
+#define MAX_BRILLO_PIXEL  255
+#define MAX_INTENSIDAD    40.0
 
 
 // Variables globales
@@ -40,31 +45,46 @@ String comandoRecibido[4];
 int  comando_pasos     = 0;  // MOVER #1: Cuantos pasos se girará el motor
 int  comando_direccion = 0;  // MOVER #2: Si el valor == 0, gira en un sentido, sino en sentido opuesto
 int  comando_velocidad = 0;  // MOVER #3: Cantidad de milisegundos a esperar entre paso y paso
-int  comando_leds      = 0;  // LEDS  #1: Intensidad del led ("0" significa apagado)
+int  comando_leds      = -1;  // LEDS  #1: Intensidad del led ("0" significa apagado)
 
 int   motor_demora     = 0;
 bool  motor_activado   = false;
 float motor_posicion   = 0;
 
+Adafruit_NeoPixel strip(8, PIN_PIXEL_LEDS, NEO_GRB + NEO_KHZ800);
+
 
 /**
  * setup
- * Inicialización del programa. Se definen los pines de
- * Arduino a utilizar y se incializa la comunicación por
- * el puerto serial que recibirá los comandos.
+ * Inicialización del programa. Se definen los pines de Arduino
+ * a utilizar, se incializa la comunicación por el puerto serial
+ * y la tira de pixel leds.
  */
 void setup() {
   pinMode(PIN_PASO_MOTOR, OUTPUT);
   pinMode(PIN_DIR_MOTOR,  OUTPUT);
   Serial.begin(SERIAL_VELOCIDAD);
+  strip.begin(); 
+  strip.fill(strip.Color(0,0,0)); // Se apagan los leds
+  strip.show();
 }
 
 
 /**
  * loop
- * Ciclo principal del programa
+ * Código del bucle principal de ejecución. 
+ * Se lee continuamente el puerto serial para recibir los comandos.
+ * Los comandos se analizan e interpretan para determinar si se
+ * trata de instrucciones para mover el motor o encender/apagar 
+ * la tira de pixel leds. Finalmente, se ejecuta el comando.
  */
 void loop() {
+
+// ---------------------------------------------------
+//
+// 1. LECTURA E INTERPRETACIÓN DEL COMANDO RECIBIDO
+//
+// ---------------------------------------------------
   leerComando();
 
   // VERIFICACIÓN DE COMANDOS PARA "LEDS"
@@ -103,6 +123,12 @@ void loop() {
   }
 
 
+
+// ---------------------------------------------------
+//
+// 2. EJECUCIÓN DE LAS ACCIONES (MOTOR / LED)
+//
+// ---------------------------------------------------
 
   // GIRO DEL MOTOR (ACTIVACIÓN DE A UN PASO A LA VEZ)
   // A continuación, se hace girar el motor según lo indicado en
@@ -162,6 +188,19 @@ void loop() {
     }
   }
 
+  // ACTIVACIÓN DE LA TIRA DE LEDS
+  // En este punto simplemente se encienden (o apagan) los píxeles 
+  // de la tira led, independientemente de si llegó o no un comando
+  // con la información RGB (si no llegó, se mantiene el último).
+  // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  if (!motor_activado) {
+    if (comando_leds >= 0) {
+      int intensidad = comando_leds * MAX_INTENSIDAD / MAX_BRILLO_PIXEL;
+      strip.fill(strip.Color(intensidad, intensidad, intensidad));
+      comando_leds = -1;
+    }
+    strip.show();
+  }
 }
 
 

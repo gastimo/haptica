@@ -7,9 +7,9 @@
 
 
 // Parámetros generales para configuración del "Mandante"
-boolean CAPTURA_VIDEO_ACTIVA = true;   // Captura el video de la webcam para su procesamiento
+boolean CAPTURA_VIDEO_ACTIVA = true;    // Captura el video de la webcam para su procesamiento
 boolean SALIDA_VIDEO_ACTIVA  = false;   // Produce video de monitoreo en la ventana de Processing
-boolean ENVIAR_FLUJO_OPTICO  = true;   // Envía por OSC la matriz del "Flujo Óptico" calculado
+boolean ENVIAR_FLUJO_OPTICO  = true;    // Envía por OSC la matriz del "Flujo Óptico" calculado
 
 
 // Variables globales para el procesamiento

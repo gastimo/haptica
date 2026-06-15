@@ -14,6 +14,23 @@ int CAMARA_ANCHO = 640;
 int CAMARA_ALTO  = 480;
 
 
+// CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+// Direcciones IPs y puertos de los equipos para el protocolo OSC
+final String  IP_MANDANTE        = "192.168.0.9";
+final String  IP_CONTROLADOR     = "192.168.0.9";
+final int     PUERTO_MANDANTE    = 9000;   // Donde recibe los mensajes ("escucha")
+final int     PUERTO_CONTROLADOR = 8000;   // A donde se envían los mensajes
+
+
+// PARÁMETROS PARA LA SERIALIZACIÓN DE MENSAJES
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+final int    SERIAL_VELOCIDAD_PUERTO = 115200;
+final String SERIAL_PUERTO_RASPBERRY = "/dev/ttyACM0";   // Puerto USB Raspberry (azul)
+final String SERIAL_PUERTO_UBUNTU    = "/dev/ttyUSB";    // Puerto USB Ubuntu
+final String SERIAL_PREFIJO_PUERTO   = SERIAL_PUERTO_RASPBERRY;
+
+
 // CONFIGURACIÓN DEl CAMPO VISUAL DEL MANDANTE
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // Define el rango de ángulos para mover la cabeza (el "cero" es el centro).
@@ -29,22 +46,6 @@ final int   FLUJO_OPTICO_COLUMNAS = 10;
 final int   FLUJO_OPTICO_FILAS    = 10;
 
 
-// PARÁMETROS PARA LA SERIALIZACIÓN DE MENSAJES
-// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-final int    SERIAL_VELOCIDAD_PUERTO = 115200;
-final String SERIAL_PUERTO_RASPBERRY = "/dev/ttyACM0";   // Puerto USB Raspberry (azul)
-final String SERIAL_PUERTO_UBUNTU    = "/dev/ttyUSB";    // Puerto USB Ubuntu
-final String SERIAL_PREFIJO_PUERTO   = SERIAL_PUERTO_RASPBERRY;
-
-
-// CONFIGURACIÓN DE PARÁMETROS PARA EL ENVÍO DE MENSAJES "OSC"
-// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-// Direcciones IPs y puertos de los equipos para el protocolo OSC
-final String  IP_MANDANTE        = "192.168.0.198";
-final String  IP_CONTROLADOR     = "192.168.0.198";
-final int     PUERTO_MANDANTE    = 9000;   // Donde recibe los mensajes ("escucha")
-final int     PUERTO_CONTROLADOR = 8000;   // A donde se envían los mensajes
-
 // Direcciones OSC para el intercambio de mensajes
 final String  DIR_FLUJO_OPTICO_DIM = "/opticalflow/matriz"; // Envío hacia el  "Controlador"  (sólo 1ra vez)
 final String  DIR_FLUJO_OPTICO     = "/opticalflow";        // Envío hacia el  "Controlador"  (de la matriz de FO)
@@ -58,7 +59,7 @@ final String  DIR_CONFIGURADOR     = "/configurador";       // Recepción desde 
 final String COMANDO_MOVER          = "M";  // Comando para mover el motor un número de pasos
 final String COMANDO_REINICIAR      = "R";  // Comando para reiniciar el motor (reestablecer posición cero)
 final String COMANDO_LEDS           = "L";  // Comando para controlar el encendido de las luces leds
-final int    COMANDO_VELOCIDAD_GIRO = 25;   // Tiempo en milisengudos entre paso y paso del motor
+final int    COMANDO_VELOCIDAD_GIRO = 10;   // Tiempo en milisengudos entre paso y paso del motor
 
 
 // COMANDOS DEL "CONFIGURADOR" RECIBIDOS POR OSC
