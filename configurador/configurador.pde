@@ -40,7 +40,7 @@ void settings() {
  * iniciales y de configuración.
  */
 void setup() {
-  background(0);  
+  background(255, 255, 0);  
   transmisor = new TransmisorOSC(PUERTO_CONFIGURADOR, IP_MANDANTE, PUERTO_MANDANTE);
 }
 

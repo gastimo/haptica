@@ -133,7 +133,7 @@ class TransmisorOSC {
         if (accion.equals(CONTROL_LUCES_LED)) {
           println("");
           println(" ### CALIBRACIÓN -> Prueba del fanal. Intensidad LED=" + valor);
-          fanal.intensidad(valor == 0 ? 0 : map(valor, 0, 9, 0, 255));
+          fanal.intensidad(valor);
         }
         else {
           println("");
@@ -150,11 +150,11 @@ class TransmisorOSC {
     //  2. DIRECCION (float) : Indica el sentido de giro (>0 en un sentido y <=0 en sentido opuesto
     // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     else if (mensajeEntrante.checkAddrPattern(DIR_CONTROLADOR)) {
-      if (mensajeEntrante.checkTypetag("ff")) {
-        float pasos = mensajeEntrante.get(0).floatValue();
-        float direccion = mensajeEntrante.get(1).floatValue();
+      if (mensajeEntrante.checkTypetag("ii")) {
+        int pasos = mensajeEntrante.get(0).intValue();
+        int direccion = mensajeEntrante.get(1).intValue();
         println(" ### CONTROLADOR ==> Mover el motor. Pasos=" + pasos + ", Dirección=" + direccion);
-        rotor.rotar(int(pasos), int(direccion));
+        rotor.rotar(pasos, direccion);
       }
     }
     

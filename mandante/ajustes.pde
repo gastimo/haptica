@@ -18,14 +18,14 @@ int CAMARA_ALTO  = 480;
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 // Direcciones IPs y puertos de los equipos para el protocolo OSC
 final String  IP_MANDANTE        = "192.168.0.9";
-final String  IP_CONTROLADOR     = "192.168.0.9";
+final String  IP_CONTROLADOR     = "192.168.0.10";
 final int     PUERTO_MANDANTE    = 9000;   // Donde recibe los mensajes ("escucha")
 final int     PUERTO_CONTROLADOR = 8000;   // A donde se envían los mensajes
 
 
 // PARÁMETROS PARA LA SERIALIZACIÓN DE MENSAJES
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-final int    SERIAL_VELOCIDAD_PUERTO = 115200;
+final int    SERIAL_VELOCIDAD_PUERTO = 9600;
 final String SERIAL_PUERTO_RASPBERRY = "/dev/ttyACM0";   // Puerto USB Raspberry (azul)
 final String SERIAL_PUERTO_UBUNTU    = "/dev/ttyUSB";    // Puerto USB Ubuntu
 final String SERIAL_PREFIJO_PUERTO   = SERIAL_PUERTO_RASPBERRY;

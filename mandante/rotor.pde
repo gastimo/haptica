@@ -47,14 +47,15 @@ class Rotor {
       transmisor.enviar(COMANDO_REINICIAR + " 0 0 0\n");
     }
     else if (accion.equals(CALIBRAR_DIR_DER)) {
-      mover(valor, -1, 1);
+      mover(valor, 0, valor * 3);
     }
     else if (accion.equals(CALIBRAR_DIR_IZQ)) {
-      mover(valor, 1, 1);
+      mover(valor, 1, valor * 3);
     }
     else if (accion.equals(CALIBRAR_REINICIO)) {
       if (posicion_actual != 0) {
-        mover(abs(int(posicion_actual / 1.8)), -int(posicion_actual/abs(posicion_actual)), int(COMANDO_VELOCIDAD_GIRO*1.5));
+        int sentido = -int(posicion_actual/abs(posicion_actual));
+        mover(abs(int(posicion_actual / 1.8)), sentido <= 0 ? 0 : 1, 1);
       }
     }
   }

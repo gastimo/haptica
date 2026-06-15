@@ -18,8 +18,9 @@
 #define PIN_PASO_MOTOR    4
 #define PIN_DIR_MOTOR     5
 #define PIN_PIXEL_LEDS    6
-#define MIN_ESPERA_CICLO  2      // En milisegundos
-#define SERIAL_VELOCIDAD  115200
+#define ESPERA_CICLO      36      // En milisegundos
+#define MIN_ESPERA_CICLO  20      // En milisegundos
+#define SERIAL_VELOCIDAD  9600
 
 #define ANGULO_PASO_MOTOR 1.8
 #define MAX_ANGULO_MOTOR  90
@@ -48,7 +49,6 @@ int  comando_velocidad = 0;  // MOVER #3: Cantidad de milisegundos a esperar ent
 int  comando_leds      = -1;  // LEDS  #1: Intensidad del led ("0" significa apagado)
 
 int   motor_demora     = 0;
-bool  motor_activado   = false;
 float motor_posicion   = 0;
 
 Adafruit_NeoPixel strip(8, PIN_PIXEL_LEDS, NEO_GRB + NEO_KHZ800);
@@ -80,11 +80,6 @@ void setup() {
  */
 void loop() {
 
-// ---------------------------------------------------
-//
-// 1. LECTURA E INTERPRETACIÓN DEL COMANDO RECIBIDO
-//
-// ---------------------------------------------------
   leerComando();
 
   // VERIFICACIÓN DE COMANDOS PARA "LEDS"
@@ -92,8 +87,8 @@ void loop() {
   // para encender o apagar las luces leds.
   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   if (comandoRecibido[0].equals(COMANDO_LEDS)) {
-    comando_leds = comandoRecibido[1].toInt();
-    enviarFeedbackLeds();
+    comando_leds = map(comandoRecibido[1].toInt(), 0, 9, 0, 255);
+    //enviarFeedbackLeds();
   }
 
   // VERIFICACIÓN DE COMANDOS PARA "GIRO DEL MOTOR"
@@ -101,15 +96,32 @@ void loop() {
   // información para hacer mover al motor.
   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   else if (comandoRecibido[0].equals(COMANDO_MOVER)) {
-    if (!motor_activado) {
-      comando_pasos     = comandoRecibido[1].toInt();
-      comando_direccion = comandoRecibido[2].toInt() > 0 ? HIGH : LOW;
-      comando_velocidad = comandoRecibido[3].toInt() <= 0 ? MIN_ESPERA_CICLO : comandoRecibido[3].toInt();
-      motor_activado    = comando_pasos > 0;
-      motor_demora      = comando_velocidad;
-    }
-    else {
-      enviarFeedbackRechazo();
+    comando_pasos     = comandoRecibido[1].toInt();
+    comando_direccion = comandoRecibido[2].toInt() > 0 ? HIGH : LOW;
+    comando_velocidad = comandoRecibido[3].toInt();
+    //enviarFeedbackMotor();
+
+    for (int i = 0; i < comando_pasos; i++) {
+      motor_posicion += (comando_direccion == HIGH ? ANGULO_PASO_MOTOR : -ANGULO_PASO_MOTOR);
+      // Se chequean los topes para no hacer girar la cabeza más de 180 grados
+      if (motor_posicion > MAX_ANGULO_MOTOR) {
+        motor_posicion = MAX_ANGULO_MOTOR;
+        comando_pasos = 0;
+        break;
+      }
+      else if (motor_posicion < MIN_ANGULO_MOTOR) {
+        motor_posicion = MIN_ANGULO_MOTOR;
+        comando_pasos = 0;
+        break;
+      }
+      // Acá, efectivamente, es donde se mueve el motor PAP
+      else {
+        digitalWrite(PIN_DIR_MOTOR,  comando_direccion); 
+        digitalWrite(PIN_PASO_MOTOR, HIGH);
+        delay(ESPERA_CICLO / 2);
+        digitalWrite(PIN_PASO_MOTOR, LOW);
+        delay(ESPERA_CICLO / 2);
+      }
     }
   }
 
@@ -119,88 +131,21 @@ void loop() {
   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   else if (comandoRecibido[0].equals(COMANDO_REINICIAR)) {
     motor_posicion = 0;
-    motor_activado = false;
   }
 
-
-
-// ---------------------------------------------------
-//
-// 2. EJECUCIÓN DE LAS ACCIONES (MOTOR / LED)
-//
-// ---------------------------------------------------
-
-  // GIRO DEL MOTOR (ACTIVACIÓN DE A UN PASO A LA VEZ)
-  // A continuación, se hace girar el motor según lo indicado en
-  // el comando recibido. Cada iteración del ciclo "loop" activa
-  // un paso del motor a la vez (o ninguno, en caso que se deba 
-  // aguardar el tiempo de "demora"). El comando se mantiene activo
-  // durante las iteraciones del ciclo hasta que se completen la
-  // cantidad de pasos solicitados (con sus respectivas "demoras")-
-  // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  if (motor_activado) {
-
-    // Primero se verifica si se trata de un nuevo comando, recién
-    // recibido, para girar el motor (motor_demora==comando_velocidad)
-    if (motor_demora == comando_velocidad) {  
-      motor_posicion += (comando_direccion == HIGH ? ANGULO_PASO_MOTOR : -ANGULO_PASO_MOTOR);
-      // Se chequean los topes para no hacer girar la cabeza más de 180 grados
-      if (motor_posicion > MAX_ANGULO_MOTOR) {
-        motor_posicion = MAX_ANGULO_MOTOR;
-        motor_activado = false;
-        comando_pasos = 0;
-        delay(MIN_ESPERA_CICLO);
-      }
-      else if (motor_posicion < MIN_ANGULO_MOTOR) {
-        motor_posicion = MIN_ANGULO_MOTOR;
-        motor_activado = false;
-        comando_pasos = 0;
-        delay(MIN_ESPERA_CICLO);
-      }
-      // Acá, efectivamente, es donde se mueve el motor PAP
-      else {
-        digitalWrite(PIN_DIR_MOTOR,  comando_direccion); 
-        digitalWrite(PIN_PASO_MOTOR, HIGH);
-        delay(MIN_ESPERA_CICLO / 2);
-        digitalWrite(PIN_PASO_MOTOR, LOW);
-        delay(MIN_ESPERA_CICLO / 2);
-        motor_demora -= MIN_ESPERA_CICLO;
-      }
-      enviarFeedbackMotor();
-    }
-
-    // Sino, signficia que aún se encuentra en medio de la ejecución
-    // de alguno de los pasos del comando (esperar la "demora")
-    else if (motor_demora > 0) {
-      delay(MIN_ESPERA_CICLO);
-      motor_demora -= MIN_ESPERA_CICLO;
-    }
-
-    // Si ya no queda "demora" por esperar, significa que acaba de
-    // terminar de mover un paso. Se debe verificar si hay más pasos
-    // o si ya se completaron todos los pasos pedidos en el comando.
-    else {
-      if (comando_pasos > 0) {
-        comando_pasos -= 1;
-        motor_activado = comando_pasos > 0;
-        motor_demora = comando_velocidad;
-      }
-    }
-  }
 
   // ACTIVACIÓN DE LA TIRA DE LEDS
   // En este punto simplemente se encienden (o apagan) los píxeles 
   // de la tira led, independientemente de si llegó o no un comando
   // con la información RGB (si no llegó, se mantiene el último).
   // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  if (!motor_activado) {
-    if (comando_leds >= 0) {
-      int intensidad = comando_leds * MAX_INTENSIDAD / MAX_BRILLO_PIXEL;
-      strip.fill(strip.Color(intensidad, intensidad, intensidad));
-      comando_leds = -1;
-    }
-    strip.show();
+  if (comando_leds >= 0) {
+    int intensidad = comando_leds * MAX_INTENSIDAD / MAX_BRILLO_PIXEL;
+    strip.fill(strip.Color(intensidad, intensidad, intensidad));
+    comando_leds = -1;
+    delay(MIN_ESPERA_CICLO);
   }
+  strip.show();
 }
 
 
@@ -246,7 +191,11 @@ void blanquearComando() {
  */
 void enviarFeedbackMotor() {
   Serial.print(FEEDBACK_POSICION);
-  Serial.println(motor_posicion);
+  Serial.print(motor_posicion);
+  Serial.print(" ");
+  Serial.print(comando_pasos);
+  Serial.print(" ");
+  Serial.println(comando_direccion);
 }
 
 
